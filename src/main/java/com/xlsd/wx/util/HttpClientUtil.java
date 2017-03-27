@@ -24,6 +24,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -47,8 +48,38 @@ public class HttpClientUtil {
         public X509Certificate[] getAcceptedIssuers() {  
             return null;  
         }  
-	};  
+	};
 
+	public static HttpResult postXml(String url,String xml, Integer timeout, boolean isHttps){
+		CloseableHttpClient httpClient = null;
+		HttpPost httpPost = null;
+		HttpResult result = new HttpResult();
+		timeout = timeout == null?3000:timeout;
+		try{
+			if(isHttps){
+				httpClient = createSSLClient();
+			}else{
+				httpClient = HttpClientPool.get();
+			}
+			httpPost = new HttpPost(url);
+			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout).build();//设置请求和传输超时时间
+			httpPost.setConfig(requestConfig);
+			// Construct a string entity
+			StringEntity entity = new StringEntity(xml);
+			// Set XML entity
+			httpPost.setEntity(entity);
+			// Set content type of request header
+			httpPost.setHeader("Content-Type", "text/xml;charset=UTF-8");
+			HttpResponse response = httpClient.execute(httpPost);
+			doParseResult(response, result);
+		}catch(Exception ex){
+			ex.printStackTrace();
+			result.setStatus(504);
+		}finally{
+			doRelease(isHttps, httpClient, httpPost);
+		}
+		return result;
+	}
     
 	public static HttpResult doPost(String url,Map<String,String> paraMap,Map<String,String> headerMap, Integer timeout){
 		return doPost(url, paraMap, headerMap,timeout, false);

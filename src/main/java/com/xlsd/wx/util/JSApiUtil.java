@@ -2,6 +2,9 @@ package com.xlsd.wx.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.xlsd.wx.exception.WxPayException;
+import com.xlsd.wx.model.pay.WxPayJsApiPay;
+import com.xlsd.wx.model.pay.WxPayResults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -9,10 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Administrator on 2017/3/25 0025.
@@ -138,5 +138,6 @@ public class JSApiUtil {
         String bizString = toUrlParams(paramMap);
         return "https://api.weixin.qq.com/sns/oauth2/access_token?" + bizString;
     }
+
 
 }

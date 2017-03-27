@@ -49,7 +49,7 @@ public class WxPayDataBase {
      * 输出xml字符
      * @throws WxPayException
      **/
-    public String trimoXml() throws WxPayException {
+    public String toXml() throws WxPayException {
         if(this.values == null || this.values.size() == 0 )
         {
             throw new WxPayException("数组数据异常！");
